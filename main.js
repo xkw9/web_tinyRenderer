@@ -46,6 +46,7 @@ function updateFPS() {
 
 let model = new Model(objFile);
 
+fpsLabel.innerText = "loading model data, please wait...";
 await model.load();
 
 model.transform(new Mat4(
@@ -93,6 +94,7 @@ function renderLoop() {
     
     if (pause_render) {
         model.set(objFile)
+        fpsLabel.innerText = "loading model data, please wait...";
         model.load().then(() => {pause_render = false; renderLoop()});
         return;
     }
