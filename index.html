@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiny Renderer</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+        canvas {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tiny Renderer</h1>
+    <p id="fps">FPS: -</p>
+    <div style="display: flex; flex-direction: row; align-items: flex-start;">
+        <canvas id="canvas" width="800" height="800" style="width: 800px; height: 800px;"></canvas>
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-left: 24px; max-height: 800px; overflow-y: auto;">
+            <div style="background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); min-width: 220px;">
+                <h3>Model Options</h3>
+                <label for="model-select">Select model:</label>
+                <select id="model-select" style="width: 100%; margin-bottom: 16px;">
+                    <option value="mitagothic">Mita gothic (small)</option>
+                    <option value="mila">Mila (medium)</option>
+                    <option value="zzzshark">Ellen (large)</option>
+                </select>
+                <div style="margin-bottom: 12px;">
+                    <label for="x-range">X</label>
+                    <input type="range" id="x-range" min="-2" max="2" step="0.01" value="0" oninput="document.getElementById('x-value').textContent = this.value">
+                    <span id="x-value">0</span>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label for="y-range">Y</label>
+                    <input type="range" id="y-range" min="-2" max="2" step="0.01" value="-0.5" oninput="document.getElementById('y-value').textContent = this.value">
+                    <span id="y-value">-0.5</span>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label for="z-range">Z</label>
+                    <input type="range" id="z-range" min="-2" max="2" step="0.01" value="0" oninput="document.getElementById('z-value').textContent = this.value">
+                    <span id="z-value">0</span>
+                </div>
+                <div style="margin-top: 16px;">
+                    <input type="checkbox" id="auto-rotate" />
+                    <label for="auto-rotate">Auto Rotate</label>
+                </div>
+            </div>
+            <div style="background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); min-width: 220px;">
+                <h3>Render Options</h3>
+                <label for="shader-select">Select Shader:</label>
+                <select id="shader-select" style="width: 100%;">
+                    <option value="plainTexture">Plain Texture</option>
+                    <option value="depth">Depth</option>
+                    <option value="gourad">Gouraud</option>
+                    <option value="phong">Phong (laggy)</option>
+                    <option value="textureWithShadow">Phong + Shadow (very laggy!)</option>
+                </select>
+                <!-- <div style="margin-bottom: 12px;">
+                    <p>(adjust this value 👇 if you see rough shadow edge)</p>
+                    <label for="Shadow Bias">Shadow Bias</label>
+                    <input type="range" id="shadow-bias" min="0" max="0.005" step="0.0001" value="0.0015" oninput="document.getElementById('shadow-bias-value').textContent = this.value">
+                    <span id="shadow-bias-value">0.0015</span>
+                </div> -->
+                <div style="margin-top: 16px;">
+                    <input type="checkbox" id="show-triangle-lines" />
+                    <label for="Show Triangle Lines">Show Triangle Lines</label>
+                </div>
+            </div>
+            <div style="background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); min-width: 220px;">
+                <h3>Camera Options</h3>
+                <p>drag to move camera, scroll to zoom in / out</p>
+                <button id="reset-camera-btn" style="width: 100%; margin-bottom: 12px;">Reset Camera</button>
+            </div>
+            <div style="background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); min-width: 220px;">
+                <h3>Light Controls</h3>
+                <p> ( light effect only rendered in Gouraud or Phong Shader )</p>
+                <div style="margin-bottom: 12px;">
+                    <label for="light-x-range">Light X</label>
+                    <input type="range" id="light-x-range" min="-2" max="2" step="0.01" value="1" oninput="document.getElementById('light-x-value').textContent = this.value">
+                    <span id="light-x-value">1</span>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label for="light-y-range">Light Y</label>
+                    <input type="range" id="light-y-range" min="-2" max="2" step="0.01" value="1" oninput="document.getElementById('light-y-value').textContent = this.value">
+                    <span id="light-y-value">1</span>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label for="light-z-range">Light Z</label>
+                    <input type="range" id="light-z-range" min="-2" max="2" step="0.01" value="1" oninput="document.getElementById('light-z-value').textContent = this.value">
+                    <span id="light-z-value">1</span>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <p> ( specular only rendered in Phong shader ) </p>
+                    <label for="specular-range">Specular Intensity</label>
+                    <input type="range" id="specular-range" min="10" max="4000" step="10" value="1000" oninput="document.getElementById('specular-value').textContent = this.value">
+                    <span id="specular-value">1000</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module" src="./main.js"></script>
+</html>
